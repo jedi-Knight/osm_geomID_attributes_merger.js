@@ -1,0 +1,46 @@
+ <!DOCTYPE html>
+ <html>
+ <head>
+ <script type = "text/javascript" src = "http://code.jquery.com/jquery-2.1.1.min.js">  </script>
+	 </head>
+	 <body>
+	 <script type="text/javascript">
+
+	
+	var geomPromise = $.Deferred();
+	var attributesPromise = $.Deferred();
+
+	$.getJSON("attributes.json", function (attributes) {
+		attributesPromise.resolve(attributes);
+	});
+
+	$.getJSON("geom.geojson", function (geom) {
+		geomPromise.resolve(geom);
+	});
+
+	$.when(geomPromise, attributesPromise).done(function (geom, attributes) {
+	
+	setTimeout(function(){
+
+		var writerJson = [];
+		
+		//console.log(geom);
+
+		for (var c in geom["features"]) {
+		//console.log(c);
+		
+			writerJson.push($.extend({
+				"id": (geom["features"][c]["properties"]["@id"]+"").replace("way/", "")
+			}, attributes));
+
+		}
+		
+		$("body").text(JSON.stringify(writerJson));
+
+		
+		},0);
+	});
+
+ </script>
+</body>
+</html>
